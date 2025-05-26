@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>候補一覧</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background: #fceef2;
+      margin: 0;
+      padding-bottom: 50px;
+    }
+
+    header {
+      background: #ffccd5;
+      color: #333;
+      padding: 15px 10px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .card {
+      margin: 20px auto;
+      padding: 10px;
+      background: white;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 10px #ccc;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    img {
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="location-header">近くの便女を探しています</header>
+
+  <div id="image-container"></div>
+
+  <script>
+    // 緯度・経度から都道府県を取得して表示
+function fetchLocationAndSetHeader() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async position => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        console.log("位置取得成功:", lat, lng);
+
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=ja`);
+          const data = await response.json();
+          console.log("リバースジオコーディング結果:", data);
+
+          const address = data.address;
+          const prefecture =
+            address.state ||
+            address.province ||
+            address.region ||
+            address.county;
+
+          if (prefecture) {
+            document.getElementById("location-header").textContent = `${prefecture}の近くの便女を探しています`;
+          } else {
+            console.log("都道府県名が見つかりませんでした", address);
+          }
+        } catch (error) {
+          console.error("API呼び出しエラー:", error);
+        }
+      },
+      error => {
+        console.error("位置情報取得エラー:", error);
+      }
+    );
+  } else {
+    console.error("Geolocation APIがサポートされていません");
+  }
+}
+
+    fetchLocationAndSetHeader();
+
+    // 画像とメッセージ表示
+    const names = ["d1", "d2", "d3", "d4", "d5"];
+    const messages = [
+      "ゆき：奴隷にしてください", 
+      "Hana：なんでもします", 
+      "美紀：アナル舐めが得意です", 
+      "咲：秘密の関係でお願いします", 
+      "リナ：オナホになりたいです"
+    ];
+
+    const container = document.getElementById("image-container");
+
+    names.forEach((name, i) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.src = `mainimages/${i + 1}.jpg`;
+      img.alt = name;
+      img.addEventListener("click", () => {
+        window.location.href = `login.html?to=${encodeURIComponent(name)}`;
+      });
+
+      const msg = document.createElement("p");
+      msg.textContent = messages[i];
+      msg.className = "message";
+
+      card.appendChild(img);
+      card.appendChild(msg);
+      container.appendChild(card);
+    });
+    window.onload = fetchLocationAndSetHeader;
+
+  </script>
+</body>
+</html>

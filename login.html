@@ -1,0 +1,35 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>ログイン</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f8ff; font-family: 'Arial', sans-serif; margin: 0; }
+    .login-box { background: white; padding: 30px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
+    input { width: 80%; padding: 10px; margin-top: 15px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+    button { margin-top: 20px; padding: 10px 30px; font-size: 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>ニックネームを入力</h2>
+    <input type="text" id="name" placeholder="あなたの名前" />
+    <br />
+    <button onclick="goToChat()">チャット開始</button>
+  </div>
+
+  <script>
+    function goToChat() {
+      const name = document.getElementById("name").value.trim();
+      const to = new URLSearchParams(window.location.search).get("to");
+      if (!name || !to) return alert("名前を入力してください");
+
+      localStorage.setItem("chat_from", name);
+      window.location.href = `chat.html?to=${encodeURIComponent(to)}`;
+    }
+  </script>
+</body>
+</html>
